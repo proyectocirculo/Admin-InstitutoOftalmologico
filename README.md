@@ -40,5 +40,9 @@ Administración contable Interna (caja)
 Conceptos
 Recibos
 
+**Usuario de Acceso**
+usuario: administracion
+contraseña: Vegaadmin
+
 
 
