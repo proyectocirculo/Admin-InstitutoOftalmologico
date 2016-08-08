@@ -1,0 +1,291 @@
+framework:
+    translator:      { fallback: %locale% }
+
+sonata_admin:
+    title:      Instituto Vega Fernandez
+    title_logo: ./bundles/vega/images/logo.png
+    templates:
+        # default global templates
+        #layout:    SonataAdminBundle::standard_layout.html.twig
+        layout:    VegaBundle:Base:standard_layout.html.twig
+        ajax:      SonataAdminBundle::ajax_layout.html.twig
+        #dashboard: SonataAdminBundle:Core:dashboard.html.twig
+        dashboard: VegaBundle:Base:dashboard.html.twig
+
+        # default actions templates, should extend a global templates
+        #list:                     SonataAdminBundle:CRUD:list.html.twig
+        list:                     VegaBundle:CRUD:list.html.twig
+        show:                     SonataAdminBundle:CRUD:show.html.twig
+        edit:                     SonataAdminBundle:CRUD:edit.html.twig
+        #list_block:               SonataAdminBundle:Block:block_admin_list.html.twig
+        list_block:               VegaBundle:Base:block_admin_list.html.twig
+        user_block:               SonataUserBundle:Admin\Core:user_block.html.twig
+        preview:                  SonataAdminBundle:CRUD:preview.html.twig
+        history:                  SonataAdminBundle:CRUD:history.html.twig
+        action:                   SonataAdminBundle:CRUD:action.html.twig
+        short_object_description: SonataAdminBundle:Helper:short-object-description.html.twig
+        delete:                   SonataAdminBundle:CRUD:delete.html.twig
+
+    dashboard:
+        blocks:
+            # display a dashboard block
+            - { position: left, type: sonata.admin.block.admin_list}
+            - { position: right, type: sonata.admin.block.dashboard_administracion, settings: {'title':'ADMINISTRACIÓN'}}
+            - { position: right, type: sonata.admin.block.dashboard_profesionales, settings: {'title':'PROFESIONALES'}}
+
+            # Customize this part to add new block configuration
+            #- { position: right, type: sonata.block.service.text, settings: { content: "<h2>Welcome to the Sonata Admin</h2> <p>This is a <code>sonata.block.service.text</code> from the Block Bundle, you can create and add new block in these area by configuring the <code>sonata_admin</code> section.</p> <br /> For instance, here a RSS feed parser (<code>sonata.block.service.rss</code>):"} }
+            #- { position: right, type: sonata.block.service.rss, settings: { title: Sonata Project's Feeds, url: http://sonata-project.org/blog/archive.rss }}
+
+        groups:
+            sonata.admin.block.admin_list:
+                label:           ADMINISTRACIÓN
+                label_catalogue: Instituto Vega Fernandez
+                items:
+                    - vega.admin.pacientes
+                    - vega.admin.atenciones
+                    - vega.admin.practicas
+                    - vega.admin.medicos
+
+
+            sonata.admin.group.content_configuraciones:
+                label:           CONFIGURACIONES
+                label_catalogue: Financiera Mongelo
+                items:
+                    - vega.admin.oss 
+                    - vega.admin.localidades
+                    - vega.admin.provincias
+                roles:
+                    - ROLE_SUPER_ADMIN
+            sonata.admin.group.content:
+                label: SISTEMA
+                label_catalogue: SISTEMA
+                items:              
+                    - sonata.user.admin.user 
+                    - sonata.user.admin.group
+
+
+    security:
+        handler: sonata.admin.security.handler.acl
+        # acl security information
+        information:
+            GUEST:    [VIEW, LIST]
+            STAFF:    [VIEW, LIST, EDIT]
+            EDITOR:   [EDIT, LIST, OPERATOR, EXPORT]
+            ADMIN:    [MASTER]
+        # permissions not related to an object instance and also to be available when objects do not exist
+        # the DELETE admin permission means the user is allowed to batch delete objects
+        admin_permissions: [CREATE, LIST, DELETE, UNDELETE, EXPORT, OPERATOR, MASTER]
+        # permission related to the objects
+        object_permissions: [VIEW, EDIT, DELETE, UNDELETE, OPERATOR, MASTER, OWNER]
+
+#sonata_translation:
+#    locales: [es]
+#        default_locale: es
+fos_user:
+    db_driver:        orm # can be orm or odm
+    firewall_name:    main
+    user_class:       Application\Sonata\UserBundle\Entity\User
+
+    group:
+        group_class:  Application\Sonata\UserBundle\Entity\Group
+
+    profile:  # Authentication Form
+        form:
+            type:               fos_user_profile
+            handler:            fos_user.profile.form.handler.default
+            name:               fos_user_profile_form
+            validation_groups:  [Authentication] # Please note : this is not the default value
+
+sonata_user:
+    security_acl:           true
+    impersonating_route:    homepage # or any route you want to use
+    class:
+        user:               Application\Sonata\UserBundle\Entity\User
+        group:              Application\Sonata\UserBundle\Entity\Group
+
+    profile:  # Profile Form (firstname, lastname, etc ...)
+        form:
+            type:               sonata.user.profile
+            handler:            sonata.user.profile.form.handler.default
+            name:               sonata_user_profile_form
+            validation_groups:  [Profile]
+
+sonata_block:
+    default_contexts: [cms]
+    blocks:
+        sonata.admin.block.admin_list:
+            contexts:   [admin]
+        #sonata.admin.block.super_admin_list:
+        #    contexts:   [admin]
+        sonata.admin.block.search_result:
+            contexts:   [admin]
+
+        sonata.admin.block.dashboard_profesionales:
+        sonata.admin.block.dashboard_administracion:
+
+        #sonata.admin_doctrine_orm.block.audit:
+        #    contexts:   [admin]
+
+        sonata.block.service.text:
+        sonata.block.service.action:
+        sonata.block.service.rss:
+
+        # Some specific blocks from the SonataMediaBundle
+        #sonata.media.block.media:
+        #sonata.media.block.gallery:
+        #sonata.media.block.feature_media:
+
+sonata_doctrine_orm_admin:
+    # default value is null, so doctrine uses the value defined in the configuration
+    entity_manager: ~
+
+    templates:
+        form:
+            - SonataDoctrineORMAdminBundle:Form:form_admin_fields.html.twig
+        filter:
+            - SonataDoctrineORMAdminBundle:Form:filter_admin_fields.html.twig
+        types:
+            list:
+                array:      SonataAdminBundle:CRUD:list_array.html.twig
+                boolean:    SonataAdminBundle:CRUD:list_boolean.html.twig
+                date:       SonataAdminBundle:CRUD:list_date.html.twig
+                time:       SonataAdminBundle:CRUD:list_time.html.twig
+                datetime:   SonataAdminBundle:CRUD:list_datetime.html.twig
+                text:       SonataAdminBundle:CRUD:base_list_field.html.twig
+                trans:      SonataAdminBundle:CRUD:list_trans.html.twig
+                string:     SonataAdminBundle:CRUD:base_list_field.html.twig
+                smallint:   SonataAdminBundle:CRUD:base_list_field.html.twig
+                bigint:     SonataAdminBundle:CRUD:base_list_field.html.twig
+                integer:    SonataAdminBundle:CRUD:base_list_field.html.twig
+                decimal:    SonataAdminBundle:CRUD:base_list_field.html.twig
+                identifier: SonataAdminBundle:CRUD:base_list_field.html.twig
+
+            show:
+                array:      SonataAdminBundle:CRUD:show_array.html.twig
+                boolean:    SonataAdminBundle:CRUD:show_boolean.html.twig
+                date:       SonataAdminBundle:CRUD:show_date.html.twig
+                time:       SonataAdminBundle:CRUD:show_time.html.twig
+                datetime:   SonataAdminBundle:CRUD:show_datetime.html.twig
+                text:       SonataAdminBundle:CRUD:base_show_field.html.twig
+                trans:      SonataAdminBundle:CRUD:show_trans.html.twig
+                string:     SonataAdminBundle:CRUD:base_show_field.html.twig
+                smallint:   SonataAdminBundle:CRUD:base_show_field.html.twig
+                bigint:     SonataAdminBundle:CRUD:base_show_field.html.twig
+                integer:    SonataAdminBundle:CRUD:base_show_field.html.twig
+                decimal:    SonataAdminBundle:CRUD:base_show_field.html.twig
+
+sonata_media:
+    # if you don't use default namespace configuration
+    #class:
+    #    media: MyVendor\MediaBundle\Entity\Media
+    #    gallery: MyVendor\MediaBundle\Entity\Gallery
+    #    gallery_has_media: MyVendor\MediaBundle\Entity\GalleryHasMedia
+    default_context: default
+    db_driver: doctrine_orm # or doctrine_mongodb, doctrine_phpcr
+    contexts:
+        default:  # the default context is mandatory
+            providers:
+                #- sonata.media.provider.dailymotion
+                - sonata.media.provider.file
+                - sonata.media.provider.image
+
+            formats:
+                small: { width: 100 , quality: 70}
+                big:   { width: 500 , quality: 70}
+
+            download:
+                strategy: sonata.media.security.superadmin_strategy
+                mode: http
+        practicas:
+            providers:
+                #- sonata.media.provider.dailymotion
+                - sonata.media.provider.file
+                - sonata.media.provider.image
+
+            formats:
+                thumbnail: { width: 150 , quality: 95}
+                small:   { width: 720 , quality: 90}
+                big:   { width: 1280 , quality: 90}
+
+            download:
+                strategy: sonata.media.security.superadmin_strategy
+                mode: http
+
+        videos:
+            download:
+                strategy: sonata.media.security.superadmin_strategy
+                mode: http
+            providers:
+                - sonata.media.provider.dailymotion
+                - sonata.media.provider.youtube
+                - sonata.media.provider.file
+
+            formats:
+                cinema:     { width: 1850 , quality: 768}
+                youtube:  { width: 570 , quality: 360}
+
+    cdn:
+        server:
+            path: http://localdenis.com:81/VegaFernandez/sistema/uploads/media
+            #path: http://sistema.institutovegafernandez.com/uploads/media
+    filesystem:
+        local:
+            directory:  %kernel.root_dir%/../uploads/media
+            create:     false
+
+    providers:
+        file:
+            service:    sonata.media.provider.file
+            resizer:    false
+            filesystem: sonata.media.filesystem.local
+            cdn:        sonata.media.cdn.server
+            generator:  sonata.media.generator.default
+            #thumbnail:  sonata.media.thumbnail.format
+            allowed_extensions: ['pdf', 'txt', 'rtf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pttx', 'odt', 'odg', 'odp', 'ods', 'odc', 'odf', 'odb', 'csv', 'xml']
+            allowed_mime_types: ['application/pdf', 'application/x-pdf', 'application/rtf', 'text/html', 'text/rtf', 'text/plain']
+
+        #file:
+        #    service:    sonata.media.provider.file
+        #    resizer:    false
+        #    filesystem: sonata.media.filesystem.local
+        #    cdn:        sonata.media.cdn.server
+        #    generator:  sonata.media.generator.default
+        #    thumbnail:  sonata.media.thumbnail.format
+        #    allowed_extensions: ['pdf', 'txt', 'rtf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pttx', 'odt', 'odg', 'odp', 'ods', 'odc', 'odf', 'odb', 'csv', 'xml']
+        #    allowed_mime_types: ['application/pdf', 'application/x-pdf', 'application/rtf', 'text/html', 'text/rtf', 'text/plain']
+
+        image:
+            service:    sonata.media.provider.image
+            resizer:    sonata.media.resizer.simple # sonata.media.resizer.square
+            filesystem: sonata.media.filesystem.local
+            cdn:        sonata.media.cdn.server
+            generator:  sonata.media.generator.default
+            thumbnail:  sonata.media.thumbnail.format
+            allowed_extensions: ['jpg', 'png', 'jpeg']
+            allowed_mime_types: ['image/pjpeg', 'image/jpeg', 'image/png', 'image/x-png']
+
+        youtube:
+            service:    sonata.media.provider.youtube
+            resizer:    sonata.media.resizer.simple
+            filesystem: sonata.media.filesystem.local
+            cdn:        sonata.media.cdn.server
+            generator:  sonata.media.generator.default
+            thumbnail:  sonata.media.thumbnail.format
+            html5: false
+
+        dailymotion:
+            service:    sonata.media.provider.dailymotion
+            resizer:    sonata.media.resizer.simple
+            filesystem: sonata.media.filesystem.local
+            cdn:        sonata.media.cdn.server
+            generator:  sonata.media.generator.default
+            thumbnail:  sonata.media.thumbnail.format
+sonata_intl:
+    timezone:
+        default: America/Argentina/Buenos_Aires
+        locales:
+            es: America/Argentina/Buenos_Aires
+            en: America/Chicago
+
+

@@ -1,0 +1,37 @@
+language: php
+
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+  - hhvm
+
+env:
+  - SYMFONY_VERSION=2.3.*
+  - SYMFONY_VERSION=2.4.*
+  - SYMFONY_VERSION=2.5.*
+  - SYMFONY_VERSION=2.6.*
+  - SYMFONY_VERSION=2.7.*@dev
+
+before_script:
+  - composer selfupdate
+  - composer require symfony/symfony:${SYMFONY_VERSION} --no-update
+  - composer update --prefer-source $COMPOSER_FLAGS
+  - sudo pip install -r Resources/doc/requirements.txt
+
+script:
+  - phpunit --coverage-clover=coverage.clover
+  - cd Resources/doc
+  - sphinx-build -W -b html -d _build/doctrees . _build/html
+
+after_script:
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+
+notifications:
+    webhooks: http://sonata-project.org/bundles/translation/master/travis
+
+matrix:
+  allow_failures:
+    - php: hhvm
+    - env: SYMFONY_VERSION=2.7.*@dev

@@ -1,0 +1,21 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <h1>Encontramos un error</h1>
+
+    <p>
+	    {% if status_code == 403 %}
+	        No podemos continuar aquí. No posees los permisos necesarios. 
+	        </br>
+	        Si necesitas ayuda, por favor envía un email a denis@circulo.digital
+	        </br>
+	        <a href="{{ path('sonata_admin_dashboard') }}">Volver a Panel</a>.
+	    {% else %}
+	    	No podemos continuar aquí.  
+	    	</br>
+	        Si necesitas ayuda, por favor envía un email a denis@circulo.digital
+	        </br>
+	        <a href="{{ path('sonata_admin_dashboard') }}">Volver a Panel</a>.
+	    {% endif %}
+    </p>
+{% endblock %}

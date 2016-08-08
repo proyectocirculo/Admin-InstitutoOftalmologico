@@ -1,0 +1,39 @@
+{% extends 'SonataAdminBundle:CRUD:base_list_field.html.twig' %}
+
+{% block field%}
+
+	<script type="text/javascript">
+		$(document).ready(function()
+		{
+		   $(".detalle_elemento").parents('td').css("height", "50px"); 
+
+		   
+		});
+	</script>
+	<style type="text/css">
+	.console
+	{
+		display: none;  
+		position: fixed;
+		background-color: cyan;
+		width: 100%;
+		z-index: 99999999999999999999999;
+		left: 10px;
+		top: 240px;	
+	}
+	</style>
+    <div style=" float: left; " class="detalle_elemento">       
+	        <div style=" float: left; width: 150px; height: 35px;  font-size: 11px; ">
+	        	<div class="console">
+	       			{{ object.cliente.codigo }} 		
+	        	</div>
+			{% if object.cliente.codigo %}
+
+				N° {{ object.cliente.codigo }} <br />
+				{{ object.cliente.zona }} <br />
+
+			{% endif %}
+			</div>
+    </div>
+    
+{% endblock %}

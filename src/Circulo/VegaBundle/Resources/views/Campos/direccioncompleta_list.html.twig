@@ -1,0 +1,94 @@
+{% extends 'SonataAdminBundle:CRUD:base_list_field.html.twig' %}
+
+{% block field%}
+
+	<script type="text/javascript">
+		$(document).ready(function()
+		{
+		   $(".detalle_elemento").parents('td').css("height", "150px"); 
+
+		   
+		});
+	</script>
+	<style type="text/css">
+	.console
+	{
+		display: none;  
+		position: fixed;
+		background-color: cyan;
+		width: 100%;
+		z-index: 99999999999999999999999;
+		left: 10px;
+		top: 240px;	
+	}
+	</style>
+    <div style=" float: left; " class="detalle_elemento">       
+	        <div style=" float: left; width: 250px; height: 55px;  font-size: 11px; ">
+	        	<div class="console">
+	       			{{ object.direccioncompleta }} 		
+	        	</div>
+			{% if object.direccioncompleta %}
+
+				{% for campo in (object.direccioncompleta | split('@_@')) %}
+
+					{{ campo }} <br />
+
+
+					{# if object.direccioncompleta.direcciontipo is defined %}
+						<strong>Direcciontipo: </strong><br />
+						{{ object.direccioncompleta.direcciontipo }} <br />
+					{% endif %}
+					{% if object.direccioncompleta.direccionnombre is defined %}
+						<strong>Direccionnombre: </strong><br />
+						{{ object.direccioncompleta.direccionnombre }} <br />
+					{% endif %}
+					{% if object.direccioncompleta.direccionnumero is defined %}
+						<strong>Direccionnumero: </strong><br />
+						{{ object.direccioncompleta.direccionnumero }} <br />
+					{% endif %}
+					{% if object.direccioncompleta.direccionpiso is defined %}
+						<strong>Direccionpiso: </strong><br />
+						{{ object.direccioncompleta.direccionpiso }} <br />
+					{% endif %}
+					{% if object.direccioncompleta.direcciondpto is defined %}
+						<strong>Direcciondpto: </strong><br />
+						{{ object.direccioncompleta.direcciondpto }} <br />
+					{% endif %}
+					{% if object.direccioncompleta.tipoarea is defined %}
+						<strong>Tipoarea: </strong><br />
+						{{ object.direccioncompleta.tipoarea }} <br />
+					{% endif %}
+					{% if object.direccioncompleta.nombrearea is defined %}
+						<strong>Nombrearea: </strong><br />
+						{{ object.direccioncompleta.nombrearea }} <br />
+					{% endif %}
+					{% if object.direccioncompleta.manzana is defined %}
+						<strong>Manzana: </strong><br />
+						{{ object.direccioncompleta.manzana }} <br />
+					{% endif %}
+					{% if object.direccioncompleta.parcela is defined %}
+						<strong>Parcela: </strong><br />
+						{{ object.direccioncompleta.parcela }} <br />
+					{% endif %}
+					{% if object.direccioncompleta.unidadfuncional is defined %}
+						<strong>Unidadfuncional: </strong><br />
+						{{ object.direccioncompleta.unidadfuncional }} <br />
+					{% endif %}
+					{% if object.direccioncompleta.tira is defined %}
+						<strong>Tira: </strong><br />
+						{{ object.direccioncompleta.tira }} <br />
+					{% endif %}
+					{% if object.direccioncompleta.sector is defined %}
+						<strong>Sector: </strong><br />
+						{{ object.direccioncompleta.sector }} <br />
+					{% endif %}
+					{% if object.direccioncompleta.zona is defined %}
+						<strong>Zona: </strong><br />
+						{{ object.direccioncompleta.zona.nombre }} <br />
+					{% endif #}		
+				{% endfor %}
+			{% endif %}
+			</div>
+    </div>
+    
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends sonata_block.templates.block_base %}
+
+{% block block %}
+
+{% if is_granted('ROLE_MEDICO')  %}
+
+
+    <div class="row-fluid">
+        <!-- block -->
+        <div class="block">
+            <div class="navbar navbar-inner block-header">
+                <div class="muted pull-left">ATENCIONES</div>
+                <div class="pull-right"><span class="badge badge-info">{{ultimas_atenciones | length }}</span>
+
+                </div>
+            </div>
+            <div class="block-content collapse in">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Cód.</th>
+                            <th>Fecha</th>
+                            <th>Médico</th>
+                            <th>Paciente</th>
+                            <th>Obra Social</th>                            
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        {% for atencion in ultimas_atenciones if atencion.paciente %}
+
+                            <tr>
+                                <td><a href="{{ path('admin_circulo_vega_atenciones_edit',{'id': atencion.id })}}" rel="nofollow" title="{{ atencion.id }}">{{ atencion.id }}</a></td>
+                                <td>{{ atencion.fecha | date('d/m/Y') }}</td>
+                                <td><a href="{{ path('admin_circulo_vega_medicos_edit',{'id': atencion.medico.id })}}" rel="nofollow" title="{{ atencion.medico.id }}">{{ atencion.medico.nombre }}</a></td>
+                                <td><a href="{{ path('admin_circulo_vega_pacientes_edit',{'id': atencion.paciente.id })}}" rel="nofollow" title="{{ atencion.paciente.id }}">{{ atencion.paciente.dni }}-{{ atencion.paciente.apellido }}, {{ atencion.paciente.nombre }}</a></td>
+                                <td><a href="{{ path('admin_circulo_vega_oss_edit',{'id': atencion.paciente.os.id })}}" rel="nofollow" title="{{ atencion.paciente.os.id }}">{{ atencion.paciente.os.nombre }}</a></td>
+
+                            </tr>                            
+                        {% endfor %}                                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- /block -->
+
+
+<div class="block">
+            <div class="navbar navbar-inner block-header">
+                <div class="muted pull-left">ATENCIONES TERMINADAS</div>
+                <div class="pull-right"><span class="badge badge-info">{{ultimas_atenciones_terminadas | length }}</span>
+
+                </div>
+            </div>
+            <div class="block-content collapse in">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Cód.</th>
+                            <th>Fecha</th>
+                            <th>Médico</th>
+                            <th>Paciente</th>
+                            <th>Obra Social</th>                            
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        {% for atencion in ultimas_atenciones_terminadas  %}
+                            <tr>
+                                <td><a href="{{ path('admin_circulo_vega_atenciones_edit',{'id': atencion.id })}}" rel="nofollow" title="{{ atencion.id }}">{{ atencion.id }}</a></td>
+                                <td>{{ atencion.fecha | date('d/m/Y') }}</td>
+                                <td><a href="{{ path('admin_circulo_vega_medicos_edit',{'id': atencion.medico.id })}}" rel="nofollow" title="{{ atencion.medico.id }}">{{ atencion.medico.nombre }}</a></td>
+                                <td><a href="{{ path('admin_circulo_vega_pacientes_edit',{'id': atencion.paciente.id })}}" rel="nofollow" title="{{ atencion.paciente.id }}">{{ atencion.paciente.dni }}-{{ atencion.paciente.apellido }}, {{ atencion.paciente.nombre }}</a></td>
+                                <td><a href="{{ path('admin_circulo_vega_oss_edit',{'id': atencion.paciente.os.id })}}" rel="nofollow" title="{{ atencion.paciente.os.id }}">{{ atencion.paciente.os.nombre }}</a></td>
+
+                            </tr>                            
+                        {% endfor %}                                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- /block -->
+
+    </div>
+    <div class="row-fluid">
+        <!-- block -->
+        <div class="block">
+            <div class="navbar navbar-inner block-header">
+                <div class="muted pull-left">ESTADISTICAS</div>
+            </div>
+            <div class="block-content collapse in">
+                <div class="span3">
+                    <div class="chart" data-percent="{{ultimos_pacientes | length }}">{{ultimas_atenciones | length }}</div>
+                    <div class="chart-bottom-heading"><span class="label label-info">PENDIENTES</span>
+
+                    </div>
+                </div>            
+                <div class="span3">
+                    <div class="chart" data-percent="{{ultimas_atenciones | length }}">{{ultimas_atenciones_terminadas | length }}</div>
+                    <div class="chart-bottom-heading"><span class="label label-info">TERMINADAS</span>
+            
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        <!-- /block -->
+    </div>
+
+{% endif%}
+
+
+<script src="{{ asset('bundles/vega/js/') }}jquery.easy-pie-chart.js"></script>
+<!--script src="{{ asset('bundles/vega/js/') }}scripts.js"></script!-->
+<script>
+$(function() {
+    // Easy pie charts
+    $('.chart').easyPieChart({animate: 1000});
+});
+</script>
+{% endblock %}
+
+        

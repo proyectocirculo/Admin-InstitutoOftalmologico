@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="sonata.admin.block.dashboard_administracion" class="Circulo\VegaBundle\Block\DashboardAdministracionBlockService">
+            <tag name="sonata.block"/>
+
+            <argument>sonata.admin.block.dashboard_administracion</argument>
+            <argument type="service" id="templating" />
+            <argument type="service" id="sonata.admin.pool" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+        </service>
+
+        <service id="sonata.admin.block.dashboard_profesionales" class="Circulo\VegaBundle\Block\DashboardProfesionalesBlockService">
+            <tag name="sonata.block"/>
+
+            <argument>sonata.admin.block.dashboard_profesionales</argument>
+            <argument type="service" id="templating" />
+            <argument type="service" id="sonata.admin.pool" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="security.context" />
+        </service>
+
+    </services>
+
+</container>

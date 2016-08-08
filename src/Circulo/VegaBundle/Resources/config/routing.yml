@@ -1,0 +1,3 @@
+sistema_panel:
+    pattern:  /
+    defaults: { _controller: VegaBundle:Sistema:panel }

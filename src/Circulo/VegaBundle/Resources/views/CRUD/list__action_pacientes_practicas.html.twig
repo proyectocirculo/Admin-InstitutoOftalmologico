@@ -1,0 +1,7 @@
+<!--a class="btn btn-small" href="{# admin.generateObjectUrl('transacciones', object,{'id': object.id })  #}">Transacciones</a-->
+
+{% if object.os.medicos | length > 0 %}
+
+	<a class="btn btn-small" href="{{ path('admin_circulo_vega_pacientes_practicas_list', {'id': object.medicocabecera.id })  }}">PRACTICAS</a>
+
+{% endif %}

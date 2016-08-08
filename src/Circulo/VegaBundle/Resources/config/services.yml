@@ -1,0 +1,75 @@
+parameters:
+#    vega.example.class: Circulo\VegaBundle\Example
+
+services:
+    vega.admin.provincias:
+        class: Circulo\VegaBundle\Admin\ProvinciasAdmin
+        arguments: [~, Circulo\VegaBundle\Entity\Provincias, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: "Datos", label: Provincias}
+    vega.admin.localidades:
+        class: Circulo\VegaBundle\Admin\LocalidadesAdmin
+        arguments: [~, Circulo\VegaBundle\Entity\Localidades, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: "Datos", label: "Localidades", label_catalogue: "VegaBundle"}
+
+    vega.admin.sucursales:
+        class: Circulo\VegaBundle\Admin\SucursalesAdmin
+        arguments: [~, Circulo\VegaBundle\Entity\Sucursales, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: Sistema, label: Sucursales}
+
+    vega.admin.pacientes:
+        class: Circulo\VegaBundle\Admin\PacientesAdmin
+        arguments: [ ~,Circulo\VegaBundle\Entity\Pacientes,SonataAdminBundle:CRUD]
+        #VegaBundle:PacientesCRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: Sistema, label: Pacientes}
+        calls:
+            - [ addChild, [ '@vega.admin.atenciones' ] ]
+            - [ addChild, [ '@vega.admin.practicas' ] ]
+
+    vega.admin.atenciones:
+        class: Circulo\VegaBundle\Admin\AtencionesAdmin 
+        arguments: [~, Circulo\VegaBundle\Entity\Atenciones, SonataAdminBundle:CRUD]
+        #VegaBundle:AtencionesCRUD]
+        #"@security.token_storage
+        #"@security.context"
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Atenciones}
+        calls:
+            - [ addChild, [ '@vega.admin.practicas' ] ]
+
+    vega.admin.practicas:
+        class: Circulo\VegaBundle\Admin\PracticasAdmin
+        arguments: [~, Circulo\VegaBundle\Entity\Practicas, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Practicas}
+
+    vega.admin.medicos:
+        class: Circulo\VegaBundle\Admin\MedicosAdmin
+        arguments: [~, Circulo\VegaBundle\Entity\Medicos, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: admin, label: Medicos}
+        calls:
+            - [ addChild, [ '@vega.admin.practicas' ] ]
+            - [ addChild, [ '@vega.admin.atenciones' ] ]
+            - [ addChild, [ '@vega.admin.pacientes' ] ]
+
+    vega.admin.oss:
+        class: Circulo\VegaBundle\Admin\OSsAdmin
+        arguments: [~, Circulo\VegaBundle\Entity\OSs, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: Sistema, label: Obras Sociales}
+        calls:
+            - [ addChild, [ '@vega.admin.pacientes' ] ]
+            - [ addChild, [ '@vega.admin.medicos' ] ]
+            - [ addChild, [ '@vega.admin.practicas' ] ]
+
+    atenciones_voter:
+        class: Circulo\VegaBundle\Entity\AtencionesVoter
+        public: false
+        arguments:
+            - @doctrine.orm.entity_manager
+        tags:
+            - { name: security.voter }

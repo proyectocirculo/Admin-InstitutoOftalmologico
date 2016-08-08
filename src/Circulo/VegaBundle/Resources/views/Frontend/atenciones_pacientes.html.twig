@@ -1,0 +1,418 @@
+{% extends 'SonataAdminBundle:CRUD:base_list.html.twig' %}
+
+
+
+
+{% block list_table %}
+
+{{ sonata_block_render_event('sonata.admin.list.table.top', { 'admin': admin }) }}
+
+{% block list_header %}{% endblock %}
+
+{% set batchactions = admin.batchactions %}
+{% if admin.datagrid.results|length > 0 %}
+
+
+{% block table_header %}
+
+{% endblock %}
+
+
+{% block table_body %}
+
+
+
+
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/vega/css/')}}bootstrap-accordion.min.css" />
+
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/vega/css/')}}font-awesome.min.css" />
+
+<!--script type="text/javascript" src="{{ asset('bundles/vega/js/')}}jquery-1.10.2.min.js"></script-->
+<script type="text/javascript" src="{{ asset('bundles/vega/js/')}}bootstrap.min.js"></script>
+<script src="{{ asset('bundles/vega/js/')}}jquery-scrollto.js"></script>
+
+<!-- Accordion - START -->
+<div class="container" style="width:100%">
+    <div class="row">
+        <div class="col-sm-3 col-md-3" style="min-height:500px;">
+
+            {% for object in admin.datagrid.results %}
+            {# #}
+            <div class="panel-group" id="accordion{{ object.id }}" style="margin-bottom: 0px;">
+                <div class="panel panel-default">
+
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion{{ object.id }}" href="#Cliente{{ object.id }}" class="collapsed">
+                                <!--span class="glyphicon glyphicon-plus"></span--> 
+
+
+                                {% for field_description in admin.list.elements %}
+
+                                {% if field_description.name == '_action'%}
+                                {# Action buttons disabled in ajax view! #}
+                                {% elseif field_description.getOption('ajax_hidden') == true and app.request.isXmlHttpRequest %}
+                                {# Disable fields with 'ajax_hidden' option set to true #}
+                                {% elseif field_description.name == 'batch' %}
+                                {# Disable fields with '_batch' option set to true #}
+
+                                {% else %}
+                                    {# object|render_list_element(field_description) #}
+                                    {# "%08d"|format(object.codigo) #} 
+                                    {{ object.codigo }} / {{ object.os.id }}
+                                    
+                                {% if 'NO DAR +' in object.observaciones %}
+                                    <span class="badge" style="background-color:red;">NO DAR +</span>
+                                {% endif %}
+
+                                {% endif %}
+                                {% endfor %}
+
+                            </a>
+                        </h4>
+                    </div>
+
+
+
+                    <div id="Cliente{{ object.id }}" class="panel-collapse collapse">
+                        <ul class="list-group">
+
+                             <li class="list-group-item" onclick="MostrarCliente({{object.id}});">
+                                 <span class="glyphicon glyphicon-pencil text-primary"></span> 
+                                <a >Ver Info de Cliente</a>
+                                </li>
+
+                            {% for atencion in object.atenciones %}
+                            <li class="list-group-item" onclick="MostrarPrestamo({{atencion.id}});">
+
+                                <span class="glyphicon glyphicon-pencil text-primary"></span> 
+                                <a >Prestamo {{atencion.id}} <span class="badge">{{atencion.practicas | length }}</span></a>
+                                </li>
+
+                                {% endfor %}                                          
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+
+
+
+            </div>
+
+            {% for object in admin.datagrid.results %}
+
+               <div class="col-sm-7 col-md-7"  id="Cliente_{{ object.id }}" style="display:none;">
+                    <div class="panel panel-default">
+                    <div class="alert alert-success" >
+                    <h3>Información de Cliente</h3>
+
+                    {% if object.direccion %}
+                    <label>Direccion</label>
+                    {{object.direccion }} 
+                    {% else %}
+                    <label style="color:red">Sin Direccion</label>
+                    {% endif  %} 
+    
+                    <br />
+                    {% if object.telefono %}                    
+                    <label>Telefono</label>
+                    {{object.telefono }} - 
+                    {% else %}
+                    <label style="color:red">Sin Telefono</label>
+                    {% endif  %}
+                          
+                    <br />                                         
+                    <label>Titular </label>
+                    {{object.nombre }} 
+
+                    <br />
+                    <br />
+                    <a href="{{ path('admin_circulo_vega_pacientes_edit',{'id': object.id })}}" target="_blank">
+                        <button>Perfil completo</button>
+                    </a>
+
+                    <a href="{{ path('admin_circulo_vega_atenciones_create',{'cliente_id': object.id })}}" target="_blank">
+                        <button>Nuevo Prestamo</button>
+                    </a>
+                </div>
+
+                </div>
+                </div>
+              
+
+            {% for atencion in object.atenciones %}
+                <div class="col-sm-7 col-md-7" id="Prestamo_{{atencion.id}}" style="width: 73%;">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Prestamo número {{atencion.id}}</h3>
+                            <a href="{{ path('admin_circulo_vega_atenciones_edit',{'id': atencion.id })}}">
+                                <button>Editar</button>
+                            </a>
+                        </div>
+                        <div class="panel-body"> 
+
+                    <div class="alert alert-success" id="Cliente_{{ object.id }}" style="display:none;">
+                    <h3>Información de Cliente</h3>
+
+                    {% if object.direccion %}
+                        <label>Fecha de Alta</label>
+                        {{object.fechaalta | date('d/m/Y') }} 
+                    {% else %}
+                        <label style="color:red">Sin Fecha de Alta</label>
+                    {% endif  %}  
+
+                    {% if object.telefono %}                    
+                        <label>Telefono</label>
+                        {{object.telefono }} - 
+                    {% else %}
+                        <label style="color:red">Sin Telefono</label>
+                    {% endif  %}
+                    {% if object.direccion %}
+                        <label>Direccion</label>
+                        {{object.direccion }} 
+                    {% else %}
+                        <label style="color:red">Sin Direccion</label>
+                    {% endif  %}    
+
+                    <label>Titular </label>
+                    {{object.nombre }} 
+
+                </div>
+
+
+                            <div class="alert alert-success">
+                                <h3>Informacion del atencion</h3>
+                                <label>Fecha</label>
+                                {{atencion.fecha | date('d/m/Y') }}
+                                <br />
+                                <label>Monto</label>
+                                {{atencion.monto }}
+                                <br />
+                                <label>Cuotas</label>
+                                {{atencion.cuotas }}
+                                <br />
+                                <label>Intereses</label>
+                                {{ atencion.interes }}                                         
+                            </div>
+
+                            <div class="alert alert-danger">
+                                {% if (atencion.practicas | length) == 0 %}
+                                    <strong>SIN PRACTICAS</strong> 
+                                {% else %}
+                                    <strong>Cobros</strong>                                 
+                                {% endif %}
+                                <a href="{{ path('admin_circulo_vega_practicas_create',{'atencion': atencion.id })}}" target="_blank">
+                                    <button>Nuevo Cobro</button>
+                                </a>
+                            </div>
+
+                            <table class="table table-bordered table-striped">
+                                    <thead>
+                        <tr class="sonata-ba-list-field-header">
+                        
+                        </th>
+                        <th class="sonata-ba-list-field-header-datetime  sonata-ba-list-field-header-order-asc "><a href="#">
+                        Fecha
+                        </a></th>        
+                        <th class="sonata-ba-list-field-header-datetime  sonata-ba-list-field-header-order-asc "><a href="#">
+                        Cobrado
+                         </a></th>       
+                         <th class="sonata-ba-list-field-header-text  sonata-ba-list-field-header-order-asc "><a href="#">
+                         Monto
+                         </a></th>       
+
+                         <th class="sonata-ba-list-field-header-text  sonata-ba-list-field-header-order-asc "><a href="#">
+                         Cuota
+                         </a></th>  
+                                             
+                         <th class="sonata-ba-list-field-header-text  sonata-ba-list-field-header-order-asc "><a href="#">
+                         Cobrador
+                         </a></th> 
+                         </thead>
+                
+                                    
+
+   {% for cobro in atencion.practicas %}
+<tbody>
+ <tr>
+                               
+<td class="sonata-ba-list-field sonata-ba-list-field-datetime" objectid="1">
+{{cobro.fecha | date('d/m/Y') }}
+</td>
+
+
+<td class="sonata-ba-list-field sonata-ba-list-field-datetime" objectid="1">
+{{cobro.fechaCobrado | date('d/m/Y') }}
+</td>
+
+<td class="sonata-ba-list-field sonata-ba-list-field-text" objectid="1">
+$ {{ cobro.montoCobrado }}
+</td>
+
+<td class="sonata-ba-list-field sonata-ba-list-field-orm_many_to_one" objectid="1">
+<a href="">{{ cobro.cuota }} de {{ cobro.atencion.cuotas }}</a>
+</td>
+
+<td class="sonata-ba-list-field sonata-ba-list-field-orm_many_to_one" objectid="1">
+<a href="">{{ cobro.cobrador.nombre }}</a>
+</td>
+
+
+<td class="sonata-ba-list-field sonata-ba-list-field-actions" objectid="1">
+<div class="btn-group">
+    <a href="{{ path('admin_circulo_vega_practicas_show',{'id': cobro.id })}}" class="btn view_link btn-small" title="Mostrar">
+        <i class="icon-zoom-in"></i>
+        Mostrar
+    </a>
+
+    <a href="{{ path('admin_circulo_vega_practicas_edit',{'id': cobro.id })}}" class="btn edit_link btn-small" title="Editar">
+        <i class="icon-edit"></i>
+        Editar
+    </a>
+           
+            </div>
+
+    </td>
+     </tr>
+     <tr>
+     </tr>
+     </tbody>
+     {% endfor %}
+    <tbody>
+    <tr>
+</tr>
+                                            
+                            </tbody></table>
+                        </div>
+                    </div>
+                </div>
+
+                {% endfor %}  
+                {% endfor %}
+
+
+            </div>
+        </div>
+
+        <style>
+            body {
+                margin: 40px;
+            }
+            #accordion* .glyphicon {
+                margin-right: 10px;
+            }
+            .panel-collapse > .list-group .list-group-item:first-child {
+                border-top-right-radius: 0;
+                border-top-left-radius: 0;
+            }
+            .panel-collapse > .list-group .list-group-item {
+                border-width: 1px 0;
+                cursor: pointer;
+            }
+            .panel-collapse > .list-group {
+                margin-bottom: 0;
+            }
+            .panel-collapse .list-group-item {
+                border-radius: 0;
+            }
+            .panel-collapse .list-group .list-group {
+                margin: 0;
+                margin-top: 10px;
+            }
+            .panel-collapse .list-group-item li.list-group-item {
+                margin: 0 -15px;
+                border-top: 1px solid #ddd;
+                border-bottom: 0;
+                padding-left: 30px;
+            }
+            .panel-collapse .list-group-item li.list-group-item:last-child {
+                padding-bottom: 0;
+            }
+            .panel-collapse div.list-group div.list-group {
+                margin: 0;
+            }
+            .panel-collapse div.list-group .list-group a.list-group-item {
+                border-top: 1px solid #ddd;
+                border-bottom: 0;
+                padding-left: 30px;
+            }
+        </style>
+        <!-- Accordion - END -->
+
+
+
+                    <script type="text/javascript">
+
+                    function MostrarPrestamo(atencion)
+                    {
+                        jQuery('div[id^="Prestamo_"]').each(function() { 
+                            jQuery(this).hide();      
+                        });
+
+                        jQuery("#Prestamo_" + atencion).fadeIn('slow');
+
+                        //jQuery("#Prestamo_" + atencion).ScrollTo();
+                        //jQuery(window).scrollTop(jQuery("#Prestamo_" + atencion).offset(0   ).top);
+
+                    }
+                    function MostrarCliente(cliente)
+                    {
+                        console.log("MostrarCliente " + cliente);
+                        
+                        jQuery('div[id^="Prestamo_"]').each(function() { 
+                            jQuery(this).hide();      
+                        });
+
+                        jQuery('div[id^="Cliente_"]').each(function() { 
+                            jQuery(this).hide();      
+                            console.log("OcultarCliente");
+                        });
+
+                        jQuery('#Cliente_' + cliente).fadeIn('slow');
+
+                        //jQuery('#Cliente_' + cliente).ScrollTo();
+                        //jQuery(window).scrollTop(jQuery("#Prestamo_" + atencion).offset(0   ).top);
+
+                    }                    
+                    </script>
+
+                    {% endblock %}
+
+                    {% block table_footer %}
+                    
+                    {% block pager_links %}
+                    {% if admin.datagrid.pager.haveToPaginate() %}
+                    {% include admin.getTemplate('pager_links') %}
+                    {% endif %}
+                    {% endblock %}
+
+                    {% endblock %}
+
+
+                    {% else %}
+                    <p class="notice">
+                        {{ 'no_result'|trans({}, 'SonataAdminBundle') }}
+                    </p>
+                    {% endif %}
+
+                    {% block list_footer %}{% endblock %}
+
+                    {{ sonata_block_render_event('sonata.admin.list.table.bottom', { 'admin': admin }) }}
+
+                    {% endblock %}
+
+
+                    {# block list_filters %}
+
+                        ID
+                        Nombre
+                        Zona
+                        Direccion
+                        Sexo # }
+
+                    {% block list_filters %}
+
+                    {% endblock #}
+
